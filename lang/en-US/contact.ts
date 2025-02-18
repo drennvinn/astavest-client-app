@@ -1,0 +1,35 @@
+export default {
+    contact_us: "Contact us",
+    contast_us_title: "Contact us",
+    contast_us_description: "If you wish to contact us, this link will allow you to schedule an appointment with a member of the team or send us a message through our online form.",
+
+    be_the_first: "Be the first to build a sustainable financial future",
+    discuss_your_financial: "Discuss your financial expectations and goals",
+    presentation_of_the: "Presentation of the services adapted to your profile",
+    receieve: "Receive the details and procedures",
+    support_during_investment_period:"Support during the entire investment period",
+
+    at_the_office:"*At the office at Fleury les Aubrais or by Online videoconference",
+    as_a_reminder: "As a reminder, investing in cryptocurrencies entails the risks of error and loss. To reduce these risks, being accompanied by a Financial Advisor is strongly recommended.",
+    if_you_have_any_questions: "If you have any questions, fill out the contact form and we'll get back to you quickly. You can easily and confidentially communicate with your advisor using this form. As a reminder, investing in cryptocurrencies is not without risk. We advise you to never invest what you cannot affort to lose.",
+
+    name: "Name",
+    phone_number: "Phone Number",
+    email_address: "Email Address",
+    password: "Password",
+    location: "Location",
+    message: "Message",
+    send: "Send request",
+
+    phone_invalid: "Phone number is invalid",
+    email_required: "Email is required",
+    email_invalid: "Email is invalid",
+    name_required: "Name is required",
+    name_min_length: "Name must be at least 3 characters long",
+    message_required: "Message is required",
+    message_min_length: "Message must be at least 10 characters long",
+    consent_required: "You must consent to the privacy policy",
+    privacy_consent: "By checking this box, you consent to the collection and processing of your personal data by Astavest in accordance with our",
+    password_required: "Password is required",
+    password_min_length: "Password must be at least 6 characters long",
+}

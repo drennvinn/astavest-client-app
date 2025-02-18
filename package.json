@@ -1,0 +1,43 @@
+{
+    "name": "nuxt-app",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "nuxt build",
+        "dev": "nuxt dev",
+        "generate": "nuxt generate",
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare"
+    },
+    "dependencies": {
+        "@bhplugin/vue3-datatable": "^1.1.4",
+        "@directus/sdk": "^18.0.3",
+        "@directus/types": "^12.2.2",
+        "@headlessui/vue": "^1.7.23",
+        "@nuxt/icon": "^1.10.3",
+        "@nuxtjs/i18n": "^9.1.1",
+        "@pinia/nuxt": "^0.9.0",
+        "apexcharts": "4.3.0",
+        "big.js": "^6.2.2",
+        "epic-spinners": "^2.0.0",
+        "file-upload-with-preview": "^4.3.0",
+        "nuxt": "^3.14.1592",
+        "pinia": "^2.3.0",
+        "pinia-plugin-persistedstate": "^4.2.0",
+        "qrcode.vue": "^3.6.0",
+        "vue": "latest",
+        "vue-height-collapsible": "^0.1.1",
+        "vue-router": "latest",
+        "vue3-apexcharts": "1.8.0",
+        "vue3-perfect-scrollbar": "^2.0.0",
+        "vue3-popper": "^1.5.0"
+    },
+    "devDependencies": {
+        "@tailwindcss/forms": "^0.5.9",
+        "@tailwindcss/typography": "^0.5.15",
+        "autoprefixer": "^10.4.20",
+        "postcss": "^8.4.49",
+        "sass": "^1.83.0",
+        "tailwindcss": "^3.4.17"
+    }
+}
