@@ -1,6 +1,11 @@
 
 // export const v_required = (value: any) => !!value;
-export const v_required = (value: any): boolean => {
+export const v_required = (value: any, is_bool: boolean = false): boolean => {
+
+    if (is_bool && (value === false || value === true)) {
+        return true;
+    }
+
     if (value === null || value === undefined) return false;
     if (typeof value === 'string') return value.trim().length > 0;
     return !!value;

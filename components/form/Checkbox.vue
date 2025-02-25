@@ -34,7 +34,7 @@
 interface Props {
     label: string;
     name: string;
-    modelValue: string | boolean | null;
+    modelValue: string | boolean | null | undefined;
     value?: string | boolean;
     required?: boolean;
     error?: string;
@@ -58,6 +58,7 @@ const emit = defineEmits<{
 }>();
 
 const isChecked = computed(() => {
+    if (props.modelValue === undefined || props.modelValue === null) return false;
     if (typeof props.value === 'boolean') {
         return props.modelValue === props.value;
     }

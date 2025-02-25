@@ -1,7 +1,5 @@
 <template>
     <div>
-        <ClientFormCkWizard />
-
         <!-- <div>
             <button @click="showModal = true" class="btn btn-info">
                 Ouvrir la modal

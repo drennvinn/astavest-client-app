@@ -1,3 +1,5 @@
+// types/client/wizard.ts
+
 // Types de base
 export type ISODate = string; // Format: YYYY-MM-DD
 export type Nullable<T> = T | null;
@@ -26,9 +28,12 @@ export interface PersonalInformation {
     address?: Nullable<string>;
     city?: Nullable<string>;
     country?: Nullable<UUID>;  // Référence à la collection Country
+    email?: Nullable<string>;
+    first_name?: Nullable<string>;
     postal_code?: Nullable<string>;
     phone?: Nullable<string>;
     is_pep?: Nullable<'yes' | 'no'>;
+    last_name?: Nullable<string>;
     function_country?: Nullable<UUID>;  // Référence à la collection Country
     function_entry_date?: Nullable<ISODate>;
     function_exit_date?: Nullable<ISODate>;

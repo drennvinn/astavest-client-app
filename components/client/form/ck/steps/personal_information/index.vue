@@ -32,24 +32,32 @@
                 <!-- Identité -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nom -->
-                    <!-- <FormInput
-                        name="lastname"
+                    <FormInput
+                        name="last_name"
                         label="Nom"
-                        v-model="formData.lastname"
-                        :error="getFieldError('lastname')"
-                        required
-                        @blur="touchField('lastname')"
-                    /> -->
+                        v-model="formData.last_name"
+                        :disabled="true"
+                        @blur="touchField('last_name')"
+                    />
 
                     <!-- Prénom -->
-                    <!-- <FormInput
-                        name="firstname"
+                    <FormInput
+                        name="first_name"
                         label="Prénom"
-                        v-model="formData.firstname"
-                        :error="getFieldError('firstname')"
-                        required
-                        @blur="touchField('firstname')"
-                    /> -->
+                        v-model="formData.first_name"
+                        :disabled="true"
+                        @blur="touchField('first_name')"
+                    />
+
+                    <!-- Email -->
+                    <FormInput
+                        name="email"
+                        type="email"
+                        label="Email"
+                        v-model="formData.email"
+                        :disabled="true"
+                        @blur="touchField('email')"
+                    />
 
                     <!-- Date de naissance -->
                     <FormInput
@@ -67,16 +75,6 @@
 
                 <!-- Coordonnées -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Email -->
-                    <!-- <FormInput
-                        name="email"
-                        type="email"
-                        label="Email"
-                        v-model="formData.email"
-                        :error="getFieldError('email')"
-                        required
-                        @blur="touchField('email')"
-                    /> -->
 
                     <!-- Téléphone -->
                     <FormInput
@@ -262,8 +260,15 @@ const emit = defineEmits<{
     'valid': [value: boolean];
 }>();
 
+const authStore = useAuth();
+
 // État local
-const formData = ref<PersonalInformation>({ ...props.modelValue });
+const formData = ref<PersonalInformation>({
+    ...props.modelValue,
+    first_name: authStore.user?.first_name || '',
+    last_name: authStore.user?.last_name || '',
+    email: authStore.user?.email || ''
+});
 
 // Options
 const countryOptions = [

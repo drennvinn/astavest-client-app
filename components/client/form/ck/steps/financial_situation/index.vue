@@ -79,7 +79,7 @@
                         v-model="formData.debts_description"
                         :error="getFieldError('debts_description')"
                         required
-                        rows="3"
+                        :rows="3"
                         @blur="touchField('debts_description')"
                         help="Type de crédit, montant, durée restante..."
                     />

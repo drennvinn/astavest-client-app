@@ -1,3 +1,5 @@
+// stores/clientWizardStore.ts
+
 import { defineStore } from 'pinia';
 import type {
     StepKey,
@@ -6,7 +8,8 @@ import type {
     StepData,
     WizardStepState
 } from '~/types/client/wizard';
-import { StepStatus } from '~/types/client/wizard';  // Import explicite de l'enum
+import { useWizardValidation } from '~/composables/client/useWizardValidation';
+import { StepStatus } from '~/types/client/wizard';
 import { STEP_CONFIG } from '~/config/client/wizard/steps';
 import { VALIDATION_RULES } from '~/config/client/wizard/validation';
 import { AUTO_SAVE_DELAY, ERROR_MESSAGES } from '~/config/client/wizard/constants';
@@ -50,9 +53,9 @@ let _autoSaveTimeout: NodeJS.Timeout | null = null;
 
 export const useClientWizardStore = defineStore('clientWizard', {
 
-    // persist: true,
-
     state: createInitialState,
+
+    persist: true,
 
     getters: {
         // Obtenir les données de l'étape courante
@@ -74,6 +77,11 @@ export const useClientWizardStore = defineStore('clientWizard', {
 
         // Vérifier si on peut naviguer vers une étape
         canNavigateToStep: (state) => (targetStep: StepKey): boolean => {
+            if (!STEP_CONFIG[state.currentStep] || !STEP_CONFIG[targetStep]) {
+                console.error(`Étape non trouvée dans STEP_CONFIG: current=${state.currentStep}, target=${targetStep}`);
+                return false;
+            }
+
             const currentStepConfig = STEP_CONFIG[state.currentStep];
             const targetStepConfig = STEP_CONFIG[targetStep];
 
@@ -122,35 +130,35 @@ export const useClientWizardStore = defineStore('clientWizard', {
 
         // Validation d'une étape
         async validateStep(step: StepKey): Promise<boolean> {
+            // Pour éviter les dépendances circulaires, nous allons appeler une version simplifiée
+            // qui fait juste la mise à jour du statut
             const stepState = this.steps[step];
             const stepRules = VALIDATION_RULES[step];
-            const errors: ValidationError[] = [];
 
-            // Vérification des champs avec les règles de validation
-            if (stepRules) {
-                Object.entries(stepRules).forEach(([field, rules]) => {
-                    rules.forEach(rule => {
-                        const value = stepState.data[field as keyof typeof stepState.data];
-                        if (!rule.validator(value, stepState.data)) {
-                            errors.push({
-                                field,
-                                message: rule.message,
-                                code: rule.code
-                            });
-                        }
-                    });
-                });
+            // Si aucune règle, on considère l'étape comme valide
+            if (!stepRules) {
+                stepState.status = StepStatus.VALID;
+                stepState.errors = [];
+                return true;
             }
 
-            // Mise à jour du statut de l'étape
-            stepState.errors = errors;
-            stepState.status = errors.length === 0 ? StepStatus.VALID : StepStatus.ERROR;
+            // Déléguons le reste de la validation au composable de validation
+            const { validateStepInternal } = useWizardValidation();
+            const { isValid, errors } = await validateStepInternal(step, stepState.data);
 
-            return errors.length === 0;
+            // Mise à jour du statut et des erreurs
+            stepState.status = isValid ? StepStatus.VALID : StepStatus.ERROR;
+            stepState.errors = errors;
+
+            return isValid;
         },
 
         // Navigation vers une étape
         async navigateToStep(targetStep: StepKey) {
+            if (!this.steps[targetStep]) {
+                console.error(`Tentative de navigation vers une étape inexistante: ${targetStep}`);
+                return;
+            }
             if (this.canNavigateToStep(targetStep)) {
                 try {
                     // Sauvegarder si nécessaire
@@ -182,16 +190,21 @@ export const useClientWizardStore = defineStore('clientWizard', {
                 this.autoSave.pending = true;
                 this.autoSave.error = null;
 
-                // Simuler un appel API (à remplacer par votre logique)
+                // Simuler/implémenter l'appel API
                 await new Promise(resolve => setTimeout(resolve, 500));
 
                 this.lastSaved = new Date().toISOString();
+                // Nettoyer les erreurs de sauvegarde précédentes
+                this.globalErrors = this.globalErrors.filter(
+                    err => err.field !== 'global' || err.message !== ERROR_MESSAGES.SAVE_ERROR
+                );
             } catch (error) {
                 const maxRetries = 3;
+                // Backoff exponentiel pour les retry
+                const backoffDelay = 1000 * Math.pow(2, retryCount);
+
                 if (retryCount < maxRetries) {
-                    await new Promise(resolve =>
-                        setTimeout(resolve, 1000 * (retryCount + 1))
-                    );
+                    await new Promise(resolve => setTimeout(resolve, backoffDelay));
                     return this.saveFormState(retryCount + 1);
                 }
 

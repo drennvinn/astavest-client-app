@@ -1,4 +1,5 @@
-import { defineAsyncComponent } from 'vue';
+// config/client/wizard/steps.ts
+
 import type {
     StepKey,
     WizardStepConfig,

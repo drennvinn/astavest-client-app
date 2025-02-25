@@ -27,7 +27,7 @@
                             <li class="nav-item">
                                 <ul class="text-lg">
                                     <li class="nav-item">
-                                        <NuxtLink to="/profile" class="group" @click="toggleMobileMenu">
+                                        <NuxtLink to="/cgp-asso/profile" class="group" @click="toggleMobileMenu">
                                             <div class="flex items-center">
                                                 <icon-menu-users class="shrink-0 group-hover:!text-primary" />
                                                 <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{

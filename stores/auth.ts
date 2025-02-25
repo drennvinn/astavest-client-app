@@ -1,4 +1,4 @@
-// store/auth.ts
+// stores/auth.ts
 import { defineStore } from "pinia";
 import type { AuthResponse, AuthState, DirectusErrorResponse, UserRole } from "../types/auth";
 import { AuthErrorCode } from "../types/auth";

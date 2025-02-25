@@ -34,7 +34,7 @@ interface Props {
     label: string;
     name: string;
     type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date';
-    modelValue: string| number | null | undefined ;
+    modelValue: string | number | null | undefined ;
     required?: boolean;
     error?: string;
     help?: string;

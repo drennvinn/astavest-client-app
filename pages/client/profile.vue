@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="client">
         <!-- BREADCRUMB -->
         <!-- <ul class="flex space-x-2 rtl:space-x-reverse">
             <li>
@@ -10,6 +10,7 @@
             </li>
         </ul> -->
         <div class="pt-5">
+
             <div class="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-3 xl:grid-cols-4">
 
                 <!-- PROFILE CARD -->
@@ -19,27 +20,27 @@
                     </div>
                     <div class="mb-5">
                         <div class="flex flex-col items-center justify-center">
-                            <img :src="`${runtimeConfig.public.directusUrl}assets/${client?.user?.avatar}`" class="mb-5 h-28 w-28 rounded-full object-cover" />
+                            <img :src="`${runtimeConfig.public.directusUrl}assets/${(client?.user as DirectusUsers)?.avatar}`" class="mb-5 h-28 w-28 rounded-full object-cover" />
                             <p class="text-xl font-semibold text-primary">{{ auth_store.getFullName }}</p>
                         </div>
                         <ul class="m-auto mt-5 flex max-w-[160px] flex-col space-y-4 font-semibold text-white-dark">
                             <li class="flex items-center gap-2">
                                 <icon-calendar class="shrink-0" />
-                                {{ client?.date_of_birth }}
+                                {{ (client?.personal_information as PersonalInformation)?.birth_date }}
                             </li>
                             <li class="flex items-center gap-2">
                                 <icon-map-pin class="shrink-0" />
-                                {{ client?.city }} {{ client?.zipcode }}
+                                {{ (client?.personal_information as PersonalInformation)?.city }} {{ (client?.personal_information as PersonalInformation)?.postal_code }}
                             </li>
                             <li>
                                 <a href="javascript:;" class="flex items-center gap-2">
                                     <icon-mail class="w-5 h-5 shrink-0" />
-                                    <span class="truncate text-primary">{{ client?.user?.email }}</span></a
+                                    <span class="truncate text-primary">{{ (client?.user as DirectusUsers)?.email }}</span></a
                                 >
                             </li>
                             <li class="flex items-center gap-2">
                                 <icon-phone />
-                                <span class="whitespace-nowrap" dir="ltr">{{ client?.phone }}</span>
+                                <span class="whitespace-nowrap" dir="ltr">{{ (client?.personal_information as PersonalInformation)?.phone }}</span>
                             </li>
                         </ul>
                     </div>
@@ -47,123 +48,88 @@
                 <!-- END PROFILE CARD -->
 
 
-                <!-- REQUEST FOR CHANGE USER INFORMATION -->
+
                 <div class="panel lg:col-span-2 xl:col-span-3">
-                    <div class="mb-5">
-                        <h5 class="text-lg font-semibold dark:text-white-light">Request for change user information</h5>
-                    </div>
-                    <div class="mb-5">
-                        <Form
-                            :initial-data="formData"
-                            :rules="validationRules"
-                            @submit="onSubmit"
-                            customSubmitBtn
-                            class="max-w-screen-sm mx-auto"
-                        >
-                            <template v-slot="{ getFieldError, touchField }">
-                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <FormInput
-                                        label="Nom"
-                                        name="user.last_name"
-                                        type="text"
-                                        v-model="formData.user.last_name"
-                                        :error="getFieldError('user.last_name')"
-                                        @blur="touchField('user.last_name')"
-                                    />
-                                    <FormInput
-                                        label="Prénom"
-                                        name="user.first_name"
-                                        type="text"
-                                        v-model="formData.user.first_name"
-                                        :error="getFieldError('user.first_name')"
-                                        @blur="touchField('user.first_name')"
-                                    />
-                                </div>
-                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <FormInput
-                                        label="Email"
-                                        name="user.email"
-                                        type="email"
-                                        v-model="formData.user.email"
-                                        :error="getFieldError('user.email')"
-                                        @blur="touchField('user.email')"
-                                    />
-                                    <FormInput
-                                        label="Phone"
-                                        name="phone"
-                                        type="tel"
-                                        v-model="formData.phone"
-                                        :error="getFieldError('phone')"
-                                        @blur="touchField('phone')"
-                                    />
-                                </div>
-                                <button type="submit" class="btn btn-primary !mt-6">Submit my request</button>
-                            </template>
 
-                        </Form>
-                        <!-- <form class="space-y-5">
-                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div>
-                                    <label for="gridEmail">Email</label>
-                                    <input id="gridEmail" type="email" placeholder="Enter Email" class="form-input" />
-                                </div>
-                                <div>
-                                    <label for="gridPassword">Password</label>
-                                    <input id="gridPassword" type="Password" placeholder="Enter Password" class="form-input" />
-                                </div>
-                            </div>
-                            <div>
-                                <label for="gridAddress1">Address</label>
-                                <input id="gridAddress1" type="text" placeholder="Enter Address" value="1234 Main St" class="form-input" />
-                            </div>
-                            <div>
-                                <label for="gridAddress2">Address2</label>
-                                <input id="gridAddress2" type="text" placeholder="Enter Address2" value="Apartment, studio, or floor" class="form-input" />
-                            </div>
-                            <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                                <div class="md:col-span-2">
-                                    <label for="gridCity">City</label>
-                                    <input id="gridCity" type="text" placeholder="Enter City" class="form-input" />
-                                </div>
-                                <div>
-                                    <label for="gridState">State</label>
-                                    <select id="gridState" class="form-select text-white-dark">
-                                        <option>Choose...</option>
-                                        <option>...</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="gridZip">Zip</label>
-                                    <input id="gridZip" type="text" placeholder="Enter Zip" class="form-input" />
-                                </div>
-                            </div>
-                            <div>
-                                <label class="mt-1 flex cursor-pointer items-center">
-                                    <input type="checkbox" class="form-checkbox" />
-                                    <span class="text-white-dark">Check me out</span>
-                                </label>
-                            </div>
-                            <button type="submit" class="btn btn-primary !mt-6">Submit my request</button>
-                        </form> -->
-                    </div>
+                    <!-- CONNAISSANCE CLIENT -->
+                     <template v-if="client?.status === 'prospect'">
+                         <div class="mb-5 flex items-center justify-center h-full">
+                             <div class="max-w-[400px]">
+                                 <h1 class="text-center text-2xl mb-4 font-semibold dark:text-white-light">Connaissance client</h1>
+                                 <p class="">Afin de pouvoir finaliser votre inscription chez nous, nous vous invitons à renplir le formulaire de connaissance client en cliquant sur le bouton ci dessous</p>
+                                 <NuxtLink
+                                    to="/client/ck"
+                                    class="mx-auto btn btn-primary !mt-6 uppercase"
+                                >
+                                    Accéder au formulaire
+                                </NuxtLink>
+                             </div>
+                         </div>
+                     </template>
+                    <!-- END CONNAISSANCE CLIENT -->
+
+                    <!-- REQUEST FOR CHANGE USER INFORMATION -->
+                    <template v-else>
+                        <div class="mb-5">
+                            <h5 class="text-lg font-semibold dark:text-white-light">Request for change user information</h5>
+                        </div>
+                        <div class="mb-5">
+                            <Form
+                                :initial-data="formData"
+                                :rules="validationRules"
+                                @submit="onSubmit"
+                                customSubmitBtn
+                                class="max-w-screen-sm mx-auto"
+                            >
+                                <template v-slot="{ getFieldError, touchField }">
+                                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <FormInput
+                                            label="Nom"
+                                            name="user.last_name"
+                                            type="text"
+                                            v-model="formData.user.last_name"
+                                            :error="getFieldError('user.last_name')"
+                                            @blur="touchField('user.last_name')"
+                                        />
+                                        <FormInput
+                                            label="Prénom"
+                                            name="user.first_name"
+                                            type="text"
+                                            v-model="formData.user.first_name"
+                                            :error="getFieldError('user.first_name')"
+                                            @blur="touchField('user.first_name')"
+                                        />
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <FormInput
+                                            label="Email"
+                                            name="user.email"
+                                            type="email"
+                                            v-model="formData.user.email"
+                                            :error="getFieldError('user.email')"
+                                            @blur="touchField('user.email')"
+                                        />
+                                        <FormInput
+                                            label="Phone"
+                                            name="phone"
+                                            type="tel"
+                                            v-model="formData.phone"
+                                            :error="getFieldError('phone')"
+                                            @blur="touchField('phone')"
+                                        />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary !mt-6">Submit my request</button>
+                                </template>
+                            </Form>
+                        </div>
+                    </template>
+                    <!-- END REQUEST FOR CHANGE USER INFORMATION -->
                 </div>
-                <!-- END REQUEST FOR CHANGE USER INFORMATION -->
 
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-                <div class="panel">
-                    <h1 class="text-2xl font-semibold dark:text-white-light text-center">Documents règlementaires</h1>
-                    <p class="text-center">Pas de documents pour le moment</p>
-                </div>
-                <div class="panel">
-                    <h1 class="text-2xl font-semibold dark:text-white-light text-center">Connaissance client</h1>
-                    <p>...</p>
-                </div>
-            </div>
 
-
-            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div v-if="client?.status !== 'prospect'" class="grid grid-cols-1 gap-5 md:grid-cols-2">
 
                 <!-- HISTORY OF THE STAGES -->
                 <div class="panel">
@@ -319,7 +285,7 @@
                     </div>
                 </div>
                 <!-- END DEPOSIT HISTORY -->
-
+                 <pre>{{ client }}</pre>
             </div>
         </div>
     </div>
@@ -327,7 +293,7 @@
 <script lang="ts" setup>
 import { useAppStore } from '~/stores/useAppStore';
 import { useAuth } from '~/stores/auth';
-import type { Clients } from '~/types/astavest-crm';
+import type { DirectusUsers, Clients, PersonalInformation } from '~/types/astavest-crm';
 
 
 
@@ -353,10 +319,10 @@ const {
 
 const formData = ref({
     phone: '',
-    street: '',
+    address: '',
     city: '',
-    zipcode: '',
-    country: '',
+    postal_code: '',
+    // country: '',
     user: {
         first_name: '',
         last_name: '',
@@ -367,15 +333,15 @@ const formData = ref({
 watch(() => client.value, (newClient) => {
     if (newClient) {
         formData.value = {
-            phone: newClient.phone || '',
-            street: newClient.street || '',
-            city: newClient.city || '',
-            zipcode: newClient.zipcode || '',
-            country: newClient.country || '',
+            phone: (newClient?.personal_information as PersonalInformation)?.phone || '',
+            address: (newClient?.personal_information as PersonalInformation)?.address || '',
+            city: (newClient?.personal_information as PersonalInformation)?.city || '',
+            postal_code: (newClient?.personal_information as PersonalInformation)?.postal_code || '',
+            // country: (newClient?.personal_information as PersonalInformation)?.country || '',
             user: {
-                first_name: newClient.user?.first_name || '',
-                last_name: newClient.user?.last_name || '',
-                email: newClient.user?.email || '',
+                first_name: (newClient.user as DirectusUsers)?.first_name || '',
+                last_name: (newClient.user as DirectusUsers)?.last_name || '',
+                email: (newClient.user as DirectusUsers)?.email || '',
             }
         };
     }
@@ -413,10 +379,8 @@ const loadUserClient = async () => {
 
         const req = await $directus.request<Clients[]>($readItems('clients', {
             filter: { user: { _eq: auth_store.user?.id } },
-            fields: [
-                'date_created', 'date_of_birth', 'phone', 'street', 'city', 'zipcode', 'country',
-                { user: ['first_name', 'last_name', 'email', 'avatar'] }
-            ]
+            // @ts-ignore
+            fields: ['*.*']
         }));
         client.value = req[0];
     } catch (error: any) {
@@ -431,10 +395,8 @@ const loadUserClient = async () => {
                 // Réessayer de charger les données après rafraîchissement de la session
                 const req = await $directus.request<Clients[]>($readItems('clients', {
                     filter: { user: { _eq: auth_store.user?.id } },
-                    fields: [
-                        'date_created', 'date_of_birth', 'phone', 'street', 'city', 'zipcode', 'country',
-                        { user: ['first_name', 'last_name', 'email', 'avatar'] }
-                    ]
+                    // @ts-ignore
+                    fields: ['*.*']
                 }));
                 client.value = req[0];
                 error.value = null;

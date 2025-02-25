@@ -33,7 +33,7 @@
 interface Props {
     label: string;
     name: string;
-    modelValue: string;
+    modelValue: string | null | undefined;
     rows?: number;
     required?: boolean;
     error?: string;
@@ -58,7 +58,7 @@ const emit = defineEmits<{
 
 const handleInput = (event: Event) => {
     const target = event.target as HTMLTextAreaElement;
-    emit('update:modelValue', target.value);
+    emit('update:modelValue', target.value || '');
 };
 
 const handleBlur = (event: FocusEvent) => {

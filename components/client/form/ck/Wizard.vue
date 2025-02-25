@@ -9,14 +9,14 @@
                     class="border rounded-lg overflow-hidden"
                     :class="[
                         store.currentStep === step ? 'border-orange-500' : 'border-gray-200',
-                        { 'bg-gray-50': !store.canNavigateToStep(step) }
+                        { 'bg-gray-50 dark:bg-[#1B2E4B]': !store.canNavigateToStep(step) }
                     ]"
                 >
                     <!-- En-tête de l'étape -->
                     <div
                         class="flex items-center p-4 cursor-pointer"
                         :class="[
-                            store.canNavigateToStep(step) ? 'hover:bg-gray-50' : 'cursor-not-allowed'
+                            store.canNavigateToStep(step) ? 'hover:bg-gray-50 dark:hover:bg-[#1B2E4B]' : 'cursor-not-allowed'
                         ]"
                         @click="store.canNavigateToStep(step) && navigateToStep(step)"
                     >
@@ -74,7 +74,7 @@
                             <div v-if="store.currentStep === step" class="p-4">
                                 <ErrorBoundary>
                                     <Suspense>
-                                        <template #default>
+                                        <KeepAlive>
                                             <component
                                                 :is="getCurrentStepComponent"
                                                 :key="`step-${store.currentStep}`"
@@ -82,7 +82,7 @@
                                                 :validation="validationApi"
                                                 @valid="handleStepValidation"
                                             />
-                                        </template>
+                                        </KeepAlive>
                                         <template #fallback>
                                             <div class="flex justify-center p-8">
                                                 <span class="animate-spin w-8 h-8 border-4 border-t-orange-500 border-orange-200 rounded-full"></span>
@@ -122,36 +122,8 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Modal de confirmation -->
-            <Modal
-                v-model="navigationState.showExitConfirmation"
-                :title="'Confirmation de navigation'"
-            >
-                <template #default>
-                    <p class="text-gray-600">
-                        Certaines modifications n'ont pas été sauvegardées.
-                        Voulez-vous vraiment quitter cette étape ?
-                    </p>
-                </template>
-                <template #actions>
-                    <div class="flex justify-end space-x-4">
-                        <button
-                            @click="cancelNavigation"
-                            class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            Annuler
-                        </button>
-                        <button
-                            @click="confirmNavigation"
-                            class="px-4 py-2 bg-orange-500 text-white hover:bg-orange-600 rounded-lg transition-colors"
-                        >
-                            Confirmer
-                        </button>
-                    </div>
-                </template>
-            </Modal>
         </div>
+        <!-- <pre>{{ debugData }}</pre> -->
     </ClientOnly>
 </template>
 
@@ -168,7 +140,6 @@ import { useStepComponents } from '~/composables/client/useStepComponents';
 // Store et composables
 const store = useClientWizardStore();
 const {
-    navigationState,
     orderedSteps,
     canGoNext,
     canGoPrevious,
@@ -176,8 +147,6 @@ const {
     navigateToStep,
     goToNextStep,
     goToPreviousStep,
-    confirmNavigation,
-    cancelNavigation
 } = useWizardNavigation();
 
 const {
@@ -189,7 +158,32 @@ const {
 
 
 
-// Computed pour les classes des boutons
+
+// Données de débogage formatées
+const debugData = computed(() =>
+    JSON.stringify({
+        currentStep: store.currentStep,
+        progress: store.formProgress,
+        isComplete: store.isFormComplete,
+        hasUnsavedChanges: store.hasUnsavedChanges,
+        steps: store.steps
+    }, null, 2)
+);
+
+// S'assurer que currentStep est valide
+onMounted(() => {
+    if (!STEP_CONFIG[store.currentStep]) {
+        // Réinitialiser à la première étape
+        const firstStep = Object.keys(STEP_CONFIG)[0] as StepKey;
+        store.currentStep = firstStep;
+    }
+});
+
+
+
+// Computed
+
+// classes des boutons
 const buttonClasses = computed(() => ({
     previous: [
         canGoPrevious.value
@@ -203,35 +197,6 @@ const buttonClasses = computed(() => ({
     ]
 }));
 
-// Méthodes pour l'animation de l'accordéon
-// const startTransition = (el: Element) => {
-//     el.style.height = '0';
-//     void el.offsetHeight; // Force reflow
-//     el.style.height = el.scrollHeight + 'px';
-// };
-
-// const endTransition = (el: Element) => {
-//     el.style.height = el.scrollHeight + 'px';
-//     void el.offsetHeight; // Force reflow
-//     el.style.height = '0';
-// };
-
-
-
-// Données de débogage formatées
-// const debugData = computed(() =>
-//     JSON.stringify({
-//         currentStep: store.currentStep,
-//         progress: store.formProgress,
-//         isComplete: store.isFormComplete,
-//         hasUnsavedChanges: store.hasUnsavedChanges,
-//         steps: store.steps
-//     }, null, 2)
-// );
-
-
-
-// Computed
 const currentStepConfig = computed(() => STEP_CONFIG[store.currentStep]);
 
 const { stepComponents } = useStepComponents({

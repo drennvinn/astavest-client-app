@@ -113,7 +113,7 @@
                         label="Avez-vous des critères d'exclusion spécifiques ?"
                         v-model="formData.exclusion_criteria"
                         :error="getFieldError('exclusion_criteria')"
-                        rows="3"
+                        :rows="3"
                         @blur="touchField('exclusion_criteria')"
                         help="Projets, technologies ou types d'actifs que vous souhaitez exclure"
                     />
